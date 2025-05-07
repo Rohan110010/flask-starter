@@ -1,0 +1,58 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Check Docker Daemon Access') {
+            steps {
+                script {
+                    sh 'docker ps'
+                }
+            }
+        }
+        
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/yourusername/flask-starter.git'
+            }
+        }
+        
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    sh 'docker build -t flask-student .'
+                }
+            }
+        }
+        
+        stage('Stop Previous Container') {
+            steps {
+                script {
+                    sh 'docker stop flask-student || true'
+                    sh 'docker rm flask-student || true'
+                }
+            }
+        }
+        
+        stage('Run New Docker Container') {
+            steps {
+                script {
+                    sh 'docker run -d -p 5000:5000 --name flask-student flask-student'
+                }
+            }
+        }
+
+        stage('Post Actions') {
+            steps {
+                script {
+                    echo 'Deployment Successful'
+                }
+            }
+        }
+    }
+    
+    post {
+        failure {
+            echo 'Deployment Failed'
+        }
+    }
+}

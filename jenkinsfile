@@ -1,22 +1,19 @@
 pipeline {
     agent any
-
     stages {
-        stage('Check Docker Daemon Access') {
+        stage('Check Docker Access') {
             steps {
                 script {
                     sh 'docker ps'
                 }
             }
         }
-        
-        stage('Checkout') {
+        stage('Checkout Code') {
             steps {
-                git 'https://github.com/yourusername/flask-starter.git'
+                git branch: 'main', url: 'https://github.com/Rohan110010/flask-starter'
             }
         }
-        
-        stage('Build Docker Image') {
+        sstage('Build Docker Image') {
             steps {
                 script {
                     sh 'docker build -t flask-student .'
